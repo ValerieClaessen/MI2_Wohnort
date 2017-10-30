@@ -1,6 +1,22 @@
 .btn{
   margin: 13px 12px 12px 10px;
 }
-#p1n{
-    background-color: blue
+#p1c{
+    background-color: blue;
+    color: white
+}
+#p2c{
+    background-color:cadetblue;
+    color: white
+}
+#p3c{
+    background-color: coral;
+    color: white
+}
+#p4c{
+    background-color: darkmagenta;
+    color: white
+}
+#map_panel{
+    margin: 13px 12px 12px 10px;
 }
