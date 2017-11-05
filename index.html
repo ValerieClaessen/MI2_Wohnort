@@ -4,12 +4,21 @@
         <link rel="stylesheet" type="text/css" href="css/main.css">
         <title>Wohnort Anzeige</title>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!--leaflet css file einbinden-->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+              integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+              crossorigin=""/>
 
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!-- Leaflet javascript Bibliothek einbinden. Muss NACH Leaflet CSS kommen -->
+        <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+                integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+                crossorigin=""></script>
+
     </head>
     <body>
         <div class="container">
@@ -49,20 +58,213 @@
             </div>
     </div>-->
     <div class="col-md-2">
-        <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p1n">Person 1</button></div></div>
-        <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p2n">Person 2</button></div></div>
-        <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p3n">Person 3</button></div></div>
-        <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p4n">Person 4</button></div></div>
+        <div class="row"><div class="col-md-2"><button type="button" class="btn" onclick="drawLocations(true, mymap, 1)" id="p1n">Person 1</button></div></div>
+        <div class="row"><div class="col-md-2"><button type="button" class="btn" onclick="drawLocations(true, mymap, 2)" id="p2n">Person 2</button></div></div>
+        <div class="row"><div class="col-md-2"><button type="button" class="btn" onclick="drawLocations(true, mymap, 3)" id="p3n">Person 3</button></div></div>
+        <div class="row"><div class="col-md-2"><button type="button" class="btn" onclick="drawLocations(true, mymap, 4)" id="p4n">Person 4</button></div></div>
+        <div class="row"><div class="col-md-4"><button type="button" class="btn" onclick="showAll(mymap)" id="pa">Alle Personen</button></div></div>
     </div> 
     <div class="col-md-2">
         <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p1c"><span class="glyphicon glyphicon-home"></span> Home</button></div></div>
         <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p2c"><span class="glyphicon glyphicon-home"></span> Home</button></div></div>
         <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p3c"><span class="glyphicon glyphicon-home"></span> Home</button></div></div>
         <div class="row"><div class="col-md-2"><button type="button" class="btn" id="p4c"><span class="glyphicon glyphicon-home"></span> Home</button></div></div>
+
     </div>
     <div class="col-md-6">
         <div class="panel panel-default" id="map_panel">
-            <div class="panel-body">Map bitte hier einfügen!</div>
+           <script>
+
+               // store Coordinate in pre-defined array
+               function storeCoordinate(coord, coord_array) {
+                   coord_array.push(coord);
+               }
+
+               // helper function: set coordinates, based on ID of person
+               function person_coordinates(number_of_person, coord_array) {
+                   switch (number_of_person) {
+                       case 1:
+                           storeCoordinate(L.latLng(53.550640, 9.992012), coord_array);
+                           storeCoordinate(L.latLng(53.552361, 9.989201), coord_array);
+                           storeCoordinate(L.latLng(53.553483, 10.001560), coord_array);
+                           break;
+                       case 2:
+                           storeCoordinate(L.latLng(52.520007, 13.404954), coord_array);
+                           storeCoordinate(L.latLng(52.514073, 13.406153), coord_array);
+                           storeCoordinate(L.latLng(52.519929, 13.358688), coord_array);
+                           storeCoordinate(L.latLng(52.528285, 13.421860), coord_array);
+                           break;
+                       case 3:
+                           storeCoordinate(L.latLng(50.941278, 6.958281), coord_array);
+                           storeCoordinate(L.latLng(48.858370, 2.294481), coord_array);
+                           storeCoordinate(L.latLng(43.722952, 10.396597), coord_array);
+                           storeCoordinate(L.latLng(36.106965, -112.112997), coord_array);
+                           break;
+                       case 4:
+                           break;
+                   }
+               }
+
+               // change marker color using 'leaflet-color-markers' library.
+               function paint_marker(number_of_person) {
+                   var marker_icon_url;
+                   switch (number_of_person)
+                   {
+                       case 1:
+                           marker_icon_url='https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png';
+                           break;
+                       case 2:
+                           marker_icon_url='https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png';
+                           break;
+                       case 3:
+                           marker_icon_url='https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png';
+                           break;
+                       case 4:
+                           marker_icon_url='https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png';
+                           break;
+                   }
+
+                   marker_color = new L.Icon({
+                       iconUrl: marker_icon_url,
+                       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                       iconSize: [25, 41],
+                       iconAnchor: [12, 41],
+                       popupAnchor: [1, -34],
+                       shadowSize: [41, 41]
+                   });
+                   return marker_color;
+               }
+
+               function paint_lines(number_of_person) {
+                   var line_color;
+                   switch (number_of_person) {
+                       case 1:
+                           line_color = 'green';
+                           break;
+                       case 2:
+                           line_color = 'blue';
+                           break;
+                       case 3:
+                           line_color = 'red';
+                           break;
+                       case 4:
+                           line_color = 'purple';
+                           break;
+
+                   }
+                   var polylineOptions = {
+                       color: line_color,
+                       weight: 2,
+                       opacity: 0.9
+                   };
+                   return polylineOptions;
+               }
+
+
+               function removePreviousMarkers() {
+                   for (var i = 0; i < mapLayers.length; i++) {
+                       mymap.removeLayer(mapLayers[i]);
+                   }
+               }
+               function removePreviousLines() {
+                   for (var i = 0; i < polyLayers.length; i++) {
+                       mymap.removeLayer(polyLayers[i]);
+                   }
+               }
+
+               function showAll(mymap)
+               {
+                   drawLocations(false, mymap,1);
+                   drawLocations(false, mymap,2);
+                   drawLocations(false, mymap,3);
+                   drawLocations(false, mymap,4);
+                   var allCoordinates = coordinates_one.concat(coordinates_two.concat(coordinates_three.concat(coordinates_four)));
+
+                   var bounds = new L.LatLngBounds(allCoordinates);
+                   mymap.fitBounds(bounds, {padding: [50, 50]});
+
+               }
+
+
+               function drawLocations(singular, mymap, number_of_person) {
+
+                   if (singular) {
+                       removePreviousMarkers();
+                       removePreviousLines();
+                   }
+                   coordinates = [];
+                   var polylineOptions = paint_lines(number_of_person);
+                   var marker_color = paint_marker(number_of_person);
+
+                   person_coordinates(number_of_person, coordinates);
+
+                   //mymap.setView([51.187320, 6.795377], 15);
+                   var mLayer = L.layerGroup();
+                   // to loop through coordinate values
+                   for (var i = 0; i < coordinates.length; i++) {
+                       var coord = coordinates[i];
+                       var marker = L.marker(coord, {icon: marker_color});
+                       marker.bindPopup("<b> Person "+number_of_person+": " + (i + 1) + "</b><b>. Wohnort</b>.");
+                       marker.addTo(mLayer);
+                       //marker.addTo(mymap).bindPopup("<b>" + (i + 1) + "</b><b>. Wohnort</b>.");
+                   }
+                   mymap.addLayer(mLayer);
+                   mapLayers.push(mLayer);
+
+                   var bounds = new L.LatLngBounds(coordinates);
+                   mymap.fitBounds(bounds, {padding: [25, 25]});
+
+                   var polyline = new L.Polyline(coordinates, polylineOptions);
+                   polyLayers.push(polyline);
+                   mymap.addLayer(polyline);
+
+                   switch (number_of_person)
+                   {
+                       case 1:
+                           coordinates_one = [];
+                           coordinates_one = coordinates.slice();
+                           break;
+                       case 2:
+                           coordinates_two = [];
+                           coordinates_two = coordinates.slice();
+                           break;
+                       case 3:
+                           coordinates_three = [];
+                           coordinates_three = coordinates.slice();
+                           break;
+                       case 4:
+                           coordinates_four = [];
+                           coordinates_four = coordinates.slice();
+                           break;
+
+                   }
+               }
+
+
+
+               var mapLayers = [];
+               var polyLayers = [];
+               var coordinates_one = [];
+               var coordinates_two = [];
+               var coordinates_three = [];
+               var coordinates_four = [];
+
+
+               var mymap = new L.Map('map_panel');
+               mymap.setView([51.187320, 6.795377], 15);
+               L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                   maxZoom: 18,
+                   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                   '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                   'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                   id: 'mapbox.streets'
+               }).addTo(mymap);
+
+
+            </script>
+
+
+            <!--<div class="panel-body">Map bitte hier einfügen!</div>-->
         </div>
     </div>
 </div>

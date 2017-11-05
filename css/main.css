@@ -2,15 +2,15 @@
   margin: 13px 12px 12px 10px;
 }
 #p1c{
-    background-color: blue;
+    background-color: #26d51c;
     color: white
 }
 #p2c{
-    background-color:cadetblue;
+    background-color: #4a79d1;
     color: white
 }
 #p3c{
-    background-color: coral;
+    background-color: #a51d1b;
     color: white
 }
 #p4c{
@@ -18,5 +18,7 @@
     color: white
 }
 #map_panel{
+    width: 800px;
+    height: 600px;
     margin: 13px 12px 12px 10px;
 }
