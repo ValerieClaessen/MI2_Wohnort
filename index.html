@@ -10,11 +10,10 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
         <!--leaflet css file einbinden-->
+        <!-- Leaflet javascript Bibliothek einbinden. Muss NACH Leaflet CSS kommen -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
               integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
               crossorigin=""/>
-
-        <!-- Leaflet javascript Bibliothek einbinden. Muss NACH Leaflet CSS kommen -->
         <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
                 integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
                 crossorigin=""></script>
@@ -31,32 +30,6 @@
                 </ul>
         </div>
     </div>
-    <!--<div class="col-md-7">
-        <div class="row">
-            <div class="col-md-2"><button type="button" class="btn" id="p1n">Person 1</button></div>
-            <div class="col-md-2"><button type="button" class="btn" id="p1c"><span class="glyphicon glyphicon-home"></span> Home</button></div>
-        </div>
-        <div class="row">
-            <div class="col-md-2"><button type="button" class="btn" id="p2n">Person 2</button></div>
-            <div class="col-md-2"><button type="button" class="btn" id="p2c"><span class="glyphicon glyphicon-home"></span> Home</button></div>
-        </div>
-        <div class="row">
-            <div class="col-md-2"><button type="button" class="btn" id="p3n">Person 3</button></div>
-            <div class="col-md-2"><button type="button" class="btn" id="p3c"><span class="glyphicon glyphicon-home"></span> Home</button></div>
-        </div>
-        <div class="row">
-            <div class="col-md-2"><button type="button" class="btn" id="p4n">Person 4</button></div>
-            <div class="col-md-2"><button type="button" class="btn" id="p4c"><span class="glyphicon glyphicon-home"></span> Home</button></div>
-            
-        </div>
-    </div>
-    <div class="col-md-5">
-            <div class="col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-body">Map bitte hier einfügen!</div>
-                </div>
-            </div>
-    </div>-->
     <div class="col-md-2">
         <div class="row"><div class="col-md-2"><button type="button" class="btn" onclick="drawLocations(true, mymap, 1)" id="p1n">Person 1</button></div></div>
         <div class="row"><div class="col-md-2"><button type="button" class="btn" onclick="drawLocations(true, mymap, 2)" id="p2n">Person 2</button></div></div>
@@ -73,14 +46,14 @@
     </div>
     <div class="col-md-6">
         <div class="panel panel-default" id="map_panel">
-           <script>
+            <script>
 
-               // store Coordinate in pre-defined array
+               // Hilfsfunktion: Koordinaten in Array abspeichern
                function storeCoordinate(coord, coord_array) {
                    coord_array.push(coord);
                }
 
-               // helper function: set coordinates, based on ID of person
+               // Hilfsfunktion: Wohnort-Koordinaten der einzelnen Personen setzen.
                function person_coordinates(number_of_person, coord_array) {
                    switch (number_of_person) {
                        case 1:
@@ -105,7 +78,8 @@
                    }
                }
 
-               // change marker color using 'leaflet-color-markers' library.
+               // Farbe des Markers ändern. Zuhilfename der 'leaflet-color-markers' Icons.
+               // URL: https://github.com/pointhi/leaflet-color-markers
                function paint_marker(number_of_person) {
                    var marker_icon_url;
                    switch (number_of_person)
@@ -135,6 +109,7 @@
                    return marker_color;
                }
 
+               // Fraben der Linien, zwischen den Markierungen, setzen
                function paint_lines(number_of_person) {
                    var line_color;
                    switch (number_of_person) {
@@ -160,24 +135,28 @@
                    return polylineOptions;
                }
 
-
+               // alle Marker löschen
                function removePreviousMarkers() {
                    for (var i = 0; i < mapLayers.length; i++) {
                        mymap.removeLayer(mapLayers[i]);
                    }
                }
+
+               // alle Verbindungslinien löschen
                function removePreviousLines() {
                    for (var i = 0; i < polyLayers.length; i++) {
                        mymap.removeLayer(polyLayers[i]);
                    }
                }
 
+               // Zeigt die Wohnorte aller Personen an.
                function showAll(mymap)
                {
                    drawLocations(false, mymap,1);
                    drawLocations(false, mymap,2);
                    drawLocations(false, mymap,3);
                    drawLocations(false, mymap,4);
+
                    var allCoordinates = coordinates_one.concat(coordinates_two.concat(coordinates_three.concat(coordinates_four)));
 
                    var bounds = new L.LatLngBounds(allCoordinates);
@@ -185,28 +164,32 @@
 
                }
 
-
+               /*
+               Markiert, zuvor eingetragene, Wohnorte einer Person
+               auf der Karte und verbindet sie chronologisch.
+               Parameter:
+               singular (boolean) = alle vorherigen marker löschen
+               mymap = Verweis auf Karten-Objekt
+               number_of_person= Wert zwischen 1-4. Bestimmt, auf welche Person die Funktion angewandt weren soll.
+               */
                function drawLocations(singular, mymap, number_of_person) {
-
                    if (singular) {
                        removePreviousMarkers();
                        removePreviousLines();
                    }
                    coordinates = [];
+
                    var polylineOptions = paint_lines(number_of_person);
                    var marker_color = paint_marker(number_of_person);
 
                    person_coordinates(number_of_person, coordinates);
 
-                   //mymap.setView([51.187320, 6.795377], 15);
                    var mLayer = L.layerGroup();
-                   // to loop through coordinate values
                    for (var i = 0; i < coordinates.length; i++) {
                        var coord = coordinates[i];
                        var marker = L.marker(coord, {icon: marker_color});
                        marker.bindPopup("<b> Person "+number_of_person+": " + (i + 1) + "</b><b>. Wohnort</b>.");
                        marker.addTo(mLayer);
-                       //marker.addTo(mymap).bindPopup("<b>" + (i + 1) + "</b><b>. Wohnort</b>.");
                    }
                    mymap.addLayer(mLayer);
                    mapLayers.push(mLayer);
@@ -240,8 +223,7 @@
                    }
                }
 
-
-
+               // Variablen initialisieren
                var mapLayers = [];
                var polyLayers = [];
                var coordinates_one = [];
@@ -249,7 +231,8 @@
                var coordinates_three = [];
                var coordinates_four = [];
 
-
+               // Leaflet map initialisieren & ausrichten.
+               // erwendung der Mapbox Tiles.
                var mymap = new L.Map('map_panel');
                mymap.setView([51.187320, 6.795377], 15);
                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
@@ -260,11 +243,7 @@
                    id: 'mapbox.streets'
                }).addTo(mymap);
 
-
             </script>
-
-
-            <!--<div class="panel-body">Map bitte hier einfügen!</div>-->
         </div>
     </div>
 </div>
